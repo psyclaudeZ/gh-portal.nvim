@@ -1,4 +1,4 @@
-# nvim-reGHlection
+# gh-portal.nvim
 
 GitHub mirror for your open Vim file.
 
