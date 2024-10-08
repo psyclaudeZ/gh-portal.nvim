@@ -10,8 +10,6 @@ function M.setup()
       return
     end
     local dir = vim.fn.fnamemodify(path, ':h')
-
-    local escaped_path = vim.fn.shellescape(path)
     local escaped_dir = vim.fn.shellescape(dir)
 
     local exit_code = os.execute(string.format('git -C %s rev-parse --is-inside-work-tree &>/dev/null', escaped_dir))
@@ -21,9 +19,34 @@ function M.setup()
       return
     end
 
-    print(vim.fn.system(string.format('git -C %s rev-parse --show-toplevel', escaped_dir)))
+    local url = vim.fn.system(string.format('git -C %s config --get remote.origin.url', escaped_dir)):gsub("\n$", "")
+    local username, repo
+    if url:match("^git@github.com:") then
+      -- SSH URL format
+      username, repo = url:match("^git@github.com:(.+)/(.+)%.git$")
+    elseif url:match("^https://github.com/") then
+      -- HTTPS URL format
+      username, repo = url:match("^https://github.com/(.+)/(.+)%.git$")
+    end
 
-   -- TODO: generate git repo link
+    if username == nil or repo == nil then
+      vim.notify("gh-mirror: Unable to identify repo URL on GitHub.", vim.log.levels.ERROR)
+      return
+    end
+
+    local escaped_path = vim.fn.shellescape(path)
+    local relative_path = vim.fn.system(string.format('git ls-files --full-name %s', escaped_path)):gsub("\n$", "")
+    local current_line = vim.fn.line('.')
+    local url = string.format("https://github.com/%s/%s/blob/main/%s#L%s", username, repo, relative_path, current_line)
+
+    local os_name = vim.loop.os_uname().sysname
+    -- TODO: other OS
+    if os_name ~= "Darwin" then
+      vim.notify("gh-mirror: Operating system not supported yet.", vim.log.levels.ERROR)
+      return
+    end
+
+    vim.fn.system(string.format("open %s", url))
   end, {})
 end
 
