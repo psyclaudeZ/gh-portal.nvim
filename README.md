@@ -1,5 +1,6 @@
-# gh-portal.nvim
+# gh-portal.nvim (WIP)
 
-GitHub mirror for your open Vim file.
+Open your file in the corresponding GitHub repo, if applicable.
 
-Because (even) Vim and tmux have their limits.
+Because the marginal cost to create a productive GitHub experience inside a
+terminal is too high, and no one has nailed it yet.
