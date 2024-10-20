@@ -1,12 +1,12 @@
 local M = {}
 
 function M.setup()
-  vim.api.nvim_create_user_command('Ghmirror', function()
+  vim.api.nvim_create_user_command('GhPortal', function()
     -- TODO: git command check
     -- TODO: active branch -> main cascading
     local path = vim.api.nvim_buf_get_name(0)
     if path == nil or path == "" then
-      vim.notify("gh-mirror: Cannot get the buffer path. Make sure you have an active buffer open.", vim.log.levels.ERROR)
+      vim.notify("gh-portal: Cannot get the buffer path. Make sure you have an active buffer open.", vim.log.levels.ERROR)
       return
     end
     local dir = vim.fn.fnamemodify(path, ':h')
@@ -15,7 +15,7 @@ function M.setup()
     local exit_code = os.execute(string.format('git -C %s rev-parse --is-inside-work-tree &>/dev/null', escaped_dir))
 
     if (type(exit_code) == "number" and exit_code ~= 0) or (type(exit_code) ~= "number" and exit_code ~= true) then
-      vim.notify("gh-mirror: Not in a git repo.", vim.log.levels.ERROR)
+      vim.notify("gh-portal: Not in a git repo.", vim.log.levels.ERROR)
       return
     end
 
@@ -30,7 +30,7 @@ function M.setup()
     end
 
     if username == nil or repo == nil then
-      vim.notify("gh-mirror: Unable to identify repo URL on GitHub.", vim.log.levels.ERROR)
+      vim.notify("gh-portal: Unable to identify repo URL on GitHub.", vim.log.levels.ERROR)
       return
     end
 
@@ -42,7 +42,7 @@ function M.setup()
     local os_name = vim.loop.os_uname().sysname
     -- TODO: other OS
     if os_name ~= "Darwin" then
-      vim.notify("gh-mirror: Operating system not supported yet.", vim.log.levels.ERROR)
+      vim.notify("gh-portal: Operating system not supported yet.", vim.log.levels.ERROR)
       return
     end
 
