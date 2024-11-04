@@ -1,6 +1,15 @@
 local M = {}
 
-function M.setup()
+M.config = {
+    branch = "main",
+    enterprise_url = nil,
+}
+
+function M.setup(opts)
+  if opts then
+      M.config = vim.tbl_deep_extend("force", M.config, opts)
+  end
+
   vim.api.nvim_create_user_command('GhPortal', function()
     -- TODO: git command check
     -- TODO: active branch -> main cascading
@@ -19,14 +28,16 @@ function M.setup()
       return
     end
 
+    local host_url = M.config.enterprise_url or "github.com"
+    local branch = M.config.branch
     local url = vim.fn.system(string.format('git -C %s config --get remote.origin.url', escaped_dir)):gsub("\n$", "")
     local username, repo
-    if url:match("^git@github.com:") then
+    if url:match("^git@" .. host_url) then
       -- SSH URL format
-      username, repo = url:match("^git@github.com:(.+)/(.+)%.git$")
-    elseif url:match("^https://github.com/") then
+      username, repo = url:match("^git@" .. host_url .. ":(.+)/(.+)%.git$")
+    elseif url:match("^https://" .. host_url) then
       -- HTTPS URL format
-      username, repo = url:match("^https://github.com/(.+)/(.+)%.git$")
+      username, repo = url:match("^https://" .. host_url .. "/(.+)/(.+)%.git$")
     end
 
     if username == nil or repo == nil then
@@ -37,7 +48,7 @@ function M.setup()
     local escaped_path = vim.fn.shellescape(path)
     local relative_path = vim.fn.system(string.format('git ls-files --full-name %s', escaped_path)):gsub("\n$", "")
     local current_line = vim.fn.line('.')
-    local url = string.format("https://github.com/%s/%s/blob/main/%s#L%s", username, repo, relative_path, current_line)
+    local url = string.format("https://%s/%s/%s/blob/%s/%s#L%s", host_url, username, repo, branch, relative_path, current_line)
 
     local os_name = vim.loop.os_uname().sysname
     -- TODO: other OS
