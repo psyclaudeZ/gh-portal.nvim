@@ -14,10 +14,10 @@ terminal is too high, and no one has nailed it yet. Additionally:
 
 ```lua
 require('gh-portal').setup({
-    # Used for extracting and generating the URL. Defaults to "github.com".
+    -- Used for extracting and generating the URL. Defaults to "github.com".
     enterprise_url = "url",
 
-    # Overwrites the branch segment in the generated URL. Defaults to "main".
+    -- Overwrites the branch segment in the generated URL. Defaults to "main".
     branch = "develop",
 })
 ```
