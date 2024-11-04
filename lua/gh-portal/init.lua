@@ -2,7 +2,7 @@ local M = {}
 
 M.config = {
     branch = "main",
-    enterprise_url = nil,
+    enterprise_url = "github.com",
 }
 
 function M.setup(opts)
@@ -28,7 +28,7 @@ function M.setup(opts)
       return
     end
 
-    local host_url = M.config.enterprise_url or "github.com"
+    local host_url = M.config.enterprise_url
     local branch = M.config.branch
     local url = vim.fn.system(string.format('git -C %s config --get remote.origin.url', escaped_dir)):gsub("\n$", "")
     local username, repo
