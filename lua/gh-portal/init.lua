@@ -1,8 +1,9 @@
 local M = {}
 
 M.config = {
-    branch = "main",
     enterprise_url = "github.com",
+    branch = "main",
+    should_show_blame = true,
 }
 
 function M.setup(opts)
@@ -48,7 +49,7 @@ function M.setup(opts)
     local escaped_path = vim.fn.shellescape(path)
     local relative_path = vim.fn.system(string.format('git ls-files --full-name %s', escaped_path)):gsub("\n$", "")
     local current_line = vim.fn.line('.')
-    local url = string.format("https://%s/%s/%s/blob/%s/%s#L%s", host_url, username, repo, branch, relative_path, current_line)
+    url = string.format("https://%s/%s/%s/%s/%s/%s#L%s", host_url, username, repo, M.config.should_show_blame and "blame" or "blob" , branch, relative_path, current_line)
 
     local os_name = vim.loop.os_uname().sysname
     -- TODO: other OS
